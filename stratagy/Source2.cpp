@@ -12,7 +12,7 @@ public:
 
   double realisation(double a, double b) {
     if (strategy_) return strategy_(a, b);
-    std::runtime_error("Стратегия не установлена");
+    throw std::runtime_error("Стратегия не установлена");
   }
 
 private:
