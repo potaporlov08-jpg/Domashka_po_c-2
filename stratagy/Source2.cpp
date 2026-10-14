@@ -1,6 +1,7 @@
 #include <iostream>
 #include <functional>
 #include <string>
+#include <stdexcept>
 
 using MathStrategy = std::function<double(double, double)>;
 
@@ -12,7 +13,7 @@ public:
 
   double realisation(double a, double b) {
     if (strategy_) return strategy_(a, b);
-    std::runtime_error("Стратегия не установлена");
+    throw std::runtime_error("Стратегия не установлена");
   }
 
 private:
@@ -21,18 +22,26 @@ private:
 
 int main() {
   Calculator calc;
-  int a;
-  int b;
+  double a, b;
+  std::cout << "Введите два числа: ";
   std::cin >> a >> b;
-  calc.setStrategy([](double a, double b) { return a + b; });
-  std::cout << "Сложение: " << calc.realisation(10, 5) << "\n";
 
-  calc.setStrategy([](double a, double b) { return a - b; });
-  std::cout << "Вычитание: " << calc.realisation(10, 5) << "\n";
+  calc.setStrategy([](double x, double y) { return x + y; });
+  std::cout << "Сложение: " << calc.realisation(a, b) << "\n";
 
-  calc.setStrategy([](double a, double b) { return a * b; });
-  std::cout << "Умножение: " << calc.realisation(10, 5) << "\n";
+  calc.setStrategy([](double x, double y) { return x - y; });
+  std::cout << "Вычитание: " << calc.realisation(a, b) << "\n";
 
-  calc.setStrategy([](double a, double b) { return a / b; });
-  std::cout << "Деление: " << calc.realisation(10, 5) << "\n";
+  calc.setStrategy([](double x, double y) { return x * y; });
+  std::cout << "Умножение: " << calc.realisation(a, b) << "\n";
+
+  calc.setStrategy([](double x, double y) {
+    if (y == 0) throw std::runtime_error("Деление на ноль!");
+    return x / y;
+  });
+  try {
+    std::cout << "Деление: " << calc.realisation(a, b) << "\n";
+  } catch (const std::exception& e) {
+    std::cout << "Ошибка: " << e.what() << "\n";
+  }
 }
